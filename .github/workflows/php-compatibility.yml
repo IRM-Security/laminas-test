@@ -25,6 +25,6 @@ jobs:
           coverage: xdebug
           tools: composer:v2
       - run: composer config platform.php '${{ matrix.php }}.0'
-      - run: composer require --no-update --dev phpunit/phpunit:^9.6
+      - run: composer require --no-update --no-interaction phpunit/phpunit:^9.6
       - run: composer update --no-plugins --no-scripts --no-interaction --prefer-dist
       - run: vendor/bin/phpunit --stderr --fail-on-warning --coverage-clover coverage.xml
