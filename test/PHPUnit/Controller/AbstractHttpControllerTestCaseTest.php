@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace LaminasTest\Test\PHPUnit\Controller;
 
+use ErrorException;
 use Exception;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\Http\RouteMatch;
@@ -240,9 +241,17 @@ class AbstractHttpControllerTestCaseTest extends AbstractHttpControllerTestCase
     {
         $this->dispatch('/tests');
 
-        $this->expectError();
+        $this->expectException(ErrorException::class);
 
-        $this->assertXpathQuery('form#myform');
+        set_error_handler(static function (int $severity, string $message, string $file, int $line): void {
+            throw new ErrorException($message, 0, $severity, $file, $line);
+        }, E_WARNING);
+
+        try {
+            $this->assertXpathQuery('form#myform');
+        } finally {
+            restore_error_handler();
+        }
     }
 
     public function testAssertNotQuery(): void
